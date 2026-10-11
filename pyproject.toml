@@ -1,0 +1,20 @@
+[project]
+name = "streamstats"
+version = "0.1.0"
+description = "Add your description here"
+authors = [
+    { name = "ChurchhellaKom", email = "vsevolodddd08@mail.ru" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "black>=26.10.1",
+    "poetry>=2.5.1",
+    "ruff>=0.17.0",
+]
+
+[project.scripts]
+streamstats = "streamstats:main"
+
+[build-system]
+requires = ["uv_build>=0.13.0,<0.14.0"]
+build-backend = "uv_build"
