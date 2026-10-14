@@ -10,7 +10,7 @@ class WrongFormatError(StreamStatsError):
 class WrongEventError(StreamStatsError):
     default_message = "Error: wrong event"
 
-class WrongTymestampError(StreamStatsError):
+class WrongTimestampError(StreamStatsError):
     default_message = "Error: wrong timestamp"
 
 class WrongCLIConfError(StreamStatsError):
