@@ -2,9 +2,10 @@ import csv
 import json
 
 from . import report
+from . import errors as error
 
 err_messages = ["Too much parameters", "Too few parameters"]
-cr_messages = ["Critical error"]
+cr_messages = ["File not found", "Empty file"]
 warn_messages = ["Empty element", "Wrong email format"]
 
 msgs = {}
@@ -37,7 +38,7 @@ def print_top(msgs):
 def print_report(skip, f, counter, errors, warnings, critical):
     if skip and print_top(msgs):
         report.info(f.name, f"Analyzing ended. "
-                            f"Lines analyzed: {counter - 1}; "
+                            f"Lines analyzed: {counter}, {errors + critical} skipped; "
                             f"Events: {errors + critical + warnings} ( "
                             f"WARNINGS: {warnings + errors}; "
                             f"ERRORS: {0}; "
@@ -45,19 +46,17 @@ def print_report(skip, f, counter, errors, warnings, critical):
                             f"          Top-5 errors: {print_top(msgs)}")
     elif errors + critical == 0:
         report.info(f.name, f"Analyzing ended. "
-                            f"Lines analyzed: {counter - 1}; "
+                            f"Lines analyzed: {counter}; "
                             f"Events: {errors + critical + warnings} ( "
                             f"WARNINGS: {warnings}; "
                             f"ERRORS: {errors}; "
                             f"CRITICAL ERRORS: {critical} )")
-    else:
-        report.info(f.name, f"Analyzing ended prematurely with error. Lines analyzed: {counter - 1} ")
 
 def parse_csv(file, skip):
 
     def analyze_line(counter, check, header):
 
-        def validate(f, header, row, counter):
+        def validate(f, header, row, counter, skip):
             c = 0
             source = f"{f.name}, Line: {counter - 1}"
             for i in row:
@@ -66,15 +65,17 @@ def parse_csv(file, skip):
                 if len(str(i)) == 0:
                     report.warning(source, f"{warn_messages[0]} \"{i}\"")
                     add_to_dict(msgs, warn_messages[0])
-                    continue
+                    return counter - 1
 
             if c < len(header):
-                report.error(source, err_messages[1])
+                if skip: report.warning(source, err_messages[1])
+                else: report.error(source, err_messages[1])
                 add_to_dict(msgs, err_messages[1])
                 return counter - 1
 
             if c > len(header):
-                report.error(source, err_messages[0])
+                if skip: report.warning(source, err_messages[0])
+                else: report.error(source, err_messages[0])
                 add_to_dict(msgs, err_messages[0])
                 return counter - 1
 
@@ -82,21 +83,21 @@ def parse_csv(file, skip):
 
         for row in reader:
 
-            counter += 1
-
             if check == 0:
                 header = row
                 check = 1
                 continue
 
-            counter = validate(f, header, row, counter)
+            counter += 1
+
+            counter = validate(f, header, row, counter, skip)
 
             errors = count_msg(msgs, err_messages)
             warnings = count_msg(msgs, warn_messages)
             critical = count_msg(msgs, cr_messages)
 
             if (skip == False and (errors + critical) > 0):
-                break
+                return 2
 
         return errors, warnings, critical, counter
 
@@ -107,20 +108,21 @@ def parse_csv(file, skip):
     with open(file, 'r', encoding='utf-8') as f:
         reader = csv.reader(f)
         errors, warnings, critical, counter = analyze_line(counter, check, header)
-        print_report(skip, f, counter, errors, warnings, critical)
+        print_report(skip, f, counter-1, errors, warnings, critical)
 
 def parse_jsonl(file, skip):
 
     def analyze_line(counter, check, header):
 
-        def validate(f, header, row, counter):
+        def validate(f, header, row, counter, skip):
             c = 0
             source = f"{f.name}, Line: {counter - 1}"
 
             for i in row:
                 c += 1
                 if i not in header:
-                    report.error(source, err_messages[0])
+                    if skip: report.warning(source, err_messages[0])
+                    else: report.error(source, err_messages[0])
                     add_to_dict(msgs, err_messages[0])
                     return counter - 1
 
@@ -129,12 +131,9 @@ def parse_jsonl(file, skip):
                     add_to_dict(msgs, warn_messages[0])
                     return counter - 1
 
-                if i == 'email' and (row[i].count('@') != 1 or row[i].count('.') != 1):
-                    report.warning(source, warn_messages[1])
-                    add_to_dict(msgs, warn_messages[1])
-
             if c < len(header):
-                report.error(source, err_messages[1])
+                if skip: report.warning(source, err_messages[1])
+                else: report.error(source, err_messages[1])
                 add_to_dict(msgs, err_messages[1])
                 return counter - 1
 
@@ -150,14 +149,14 @@ def parse_jsonl(file, skip):
                 for i in row: header.append(i)
                 check = 1
 
-            counter = validate(f, header, row, counter)
+            counter = validate(f, header, row, counter, skip)
 
             errors = count_msg(msgs, err_messages)
             warnings = count_msg(msgs, warn_messages)
             critical = count_msg(msgs, cr_messages)
 
             if (skip == False and (errors + critical) > 0):
-                break
+                return 2
 
         return errors, warnings, critical, counter
 
@@ -167,7 +166,10 @@ def parse_jsonl(file, skip):
 
     try:
         with open(file, 'r', encoding='utf-8') as f:
-            errors, warnings, critical, counter = analyze_line(counter, check, header)
-            print_report(skip, f, counter, errors, warnings, critical)
+            try:
+                errors, warnings, critical, counter = analyze_line(counter, check, header)
+                print_report(skip, f, counter, errors, warnings, critical)
+            except:
+                return 2
     except:
-        raise ValueError()
+        raise error.WrongCLIConfError()

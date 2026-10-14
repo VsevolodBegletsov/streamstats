@@ -1,12 +1,15 @@
 from . import parsers
-
-import csv
+from . import errors
 
 def analyze(file, format, skip):
+    if file.split(".")[-1] != format or file.split(".")[-1] not in ["csv", "jsonl"]:
+        raise errors.WrongFormatError()
     if format == 'csv':
-        parsers.parse_csv(file, skip)
-    else:
-        parsers.parse_jsonl(file, skip)
+        res = parsers.parse_csv(file, skip)
+    elif format == 'jsonl':
+        res = parsers.parse_jsonl(file, skip)
+
+    return res
 
 def main(args):
     return analyze(args.INPUT, args.format, args.skip_invalid)

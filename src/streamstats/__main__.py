@@ -10,7 +10,7 @@ def build_parser():
 
     analyze_parser = subparsers.add_parser("analyze")
     analyze_parser.add_argument("INPUT")
-    analyze_parser.add_argument("--format", dest="format", choices=["jsonl", "csv"], required=True)
+    analyze_parser.add_argument("--format", dest="format", required=True)
     analyze_parser.add_argument("--output", dest="output_file", default="REPORT.json", required=True)
     analyze_parser.add_argument("--skip-invalid", action="store_true", required=False, default=False)
 
@@ -21,7 +21,10 @@ def build_parser():
 def main(argv):
     parser = build_parser()
     args = parser.parse_args(argv)
-    return analysis.main(args)
+    res = analysis.main(args)
+    if res == 2:
+        raise ValueError("Exit Code 2")
+    return res
 
 if __name__ == "__main__":
     raise SystemExit(main(argv=None))

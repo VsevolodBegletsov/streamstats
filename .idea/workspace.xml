@@ -5,16 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8e2995c2-420d-495b-bc1e-d74846eb8e97" name="Changes" comment="update 1">
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/streamstats.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/streamstats.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pyproject.toml" beforeDir="false" afterPath="$PROJECT_DIR$/pyproject.toml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/streamstats/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/__main__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/streamstats/analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/streamstats/errors.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/errors.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/streamstats/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/streamstats/parsers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/parsers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/streamstats/report.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/report.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uv.lock" beforeDir="false" afterPath="$PROJECT_DIR$/uv.lock" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -111,7 +108,15 @@
       <option name="project" value="LOCAL" />
       <updated>1791758198512</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="update 1">
+      <option name="closed" value="true" />
+      <created>1791844858590</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1791844858590</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
