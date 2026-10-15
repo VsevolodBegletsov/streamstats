@@ -2,34 +2,39 @@ from . import models
 from datetime import *
 import json
 
-def error(file, msg):
-    e = models.createEvent(datetime.now(), file, "ERROR", msg)
-    report(e)
+timestamps = []
 
-def warning(file, msg):
-    e = models.createEvent(datetime.now(), file, "WARNING", msg)
-    report(e)
+def event(file, level, msg, output):
+    e = models.createEvent(datetime.now(), file, level, msg)
+    report(e, output)
 
-def info(file, msg):
-    e = models.createEvent(datetime.now(), file, "INFO", msg)
-    report(e)
-
-def debug(file, msg):
-    e = models.createEvent(datetime.now(), file, "DEBUG", msg)
-    report(e)
-
-def critical(file, msg):
-    e = models.createEvent(datetime.now(), file, "CRITICAL", msg)
-    report(e)
-
-def report(e):
-    json_data = {"timestamp":  str(e.timestamp),
+def report(e, output):
+    json_data = { "timestamp":  str(e.timestamp.isoformat()[:-3]+'Z'),
                  "level": e.level,
                  "source": e.source,
                  "message": e.message }
-    #print(json_data)
-    with open('report.json', 'a+', encoding='utf-8') as outfile:
-        #f_data = json.load(outfile)
-        json.dump(json_data, outfile, ensure_ascii=False, indent=4)
-        outfile.write(',\n')
-    outfile.close()
+
+    if len(timestamps) == 2:
+        timestamps[1] = max(str(timestamps[1]), str(e.timestamp))
+    else:
+        timestamps.append(str(e.timestamp))
+
+    if "Events" in e.message:
+        json_data["message"] += f"First timestamp: {timestamps[0]} Last timestamp: {timestamps[1]}"
+
+    try:
+        with open(f'{output}', 'r', encoding='utf-8') as f:
+            content = f.read().strip()
+            if content:
+                data = json.loads(content)
+                if not isinstance(data, list):
+                    data = [data]
+            else:
+                data = []
+    except (FileNotFoundError, json.JSONDecodeError):
+        data = []
+
+    data.append(json_data)
+
+    with open(f'{output}', 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=4)

@@ -4,8 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8e2995c2-420d-495b-bc1e-d74846eb8e97" name="Changes" comment="update 2">
+    <list default="true" id="8e2995c2-420d-495b-bc1e-d74846eb8e97" name="Changes" comment="update 1">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/streamstats/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/__main__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/streamstats/analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/analysis.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/streamstats/errors.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/errors.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/streamstats/parsers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/parsers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/streamstats/report.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/report.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,12 +33,12 @@
     &quot;assignee&quot;: &quot;VsevolodBegletsov&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/VsevolodBegletsov/streamstats.git&quot;,
-    &quot;accountId&quot;: &quot;65cfa32f-1eac-4072-ae35-8b32b8c4ff35&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/VsevolodBegletsov/streamstats.git",
+    "accountId": "4a8d071a-f698-4d09-8779-6b95af901949"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 1
 }</component>
@@ -42,26 +47,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;Python.analysis.executor&quot;: &quot;Run&quot;,
-    &quot;Python.models.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/ChurchhellaKom/PycharmProjects/streamstats/src/streamstats&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python.analysis.executor": "Run",
+    "Python.models.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "C:/Users/docto/PycharmProjects/streamstats/src",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;ChangesTree.GroupingKeys&quot;: [
-      &quot;directory&quot;,
-      &quot;repository&quot;
+  "keyToStringList": {
+    "ChangesTree.GroupingKeys": [
+      "directory",
+      "repository"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\docto\PycharmProjects\streamstats\src" />
       <recent name="C:\Users\ChurchhellaKom\PycharmProjects\streamstats\src\streamstats" />
       <recent name="C:\Users\ChurchhellaKom\PycharmProjects\streamstats\src" />
       <recent name="C:\Users\ChurchhellaKom\PycharmProjects\streamstats" />
@@ -110,21 +117,22 @@
       <option name="project" value="LOCAL" />
       <updated>1791844858590</updated>
     </task>
-    <task id="LOCAL-00004" summary="update 2">
-      <option name="closed" value="true" />
-      <created>1792000213781</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1792000213781</updated>
-    </task>
-    <option name="localTasksCounter" value="5" />
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="structure" />
     <MESSAGE value="update 1" />
-    <MESSAGE value="update 2" />
-    <option name="LAST_COMMIT_MESSAGE" value="update 2" />
+    <option name="LAST_COMMIT_MESSAGE" value="update 1" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>mock:///Python Console.py</url>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

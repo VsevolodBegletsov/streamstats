@@ -1,5 +1,6 @@
 from argparse import *
 from . import analysis
+from . import errors
 
 def build_parser():
     parser = ArgumentParser(
@@ -23,7 +24,7 @@ def main(argv):
     args = parser.parse_args(argv)
     res = analysis.main(args)
     if res == 2:
-        raise ValueError("Exit Code 2")
+        raise errors.StreamStatsError("Exit Code 2")
     return res
 
 if __name__ == "__main__":
