@@ -2,11 +2,11 @@ import csv
 import json
 import re
 
-from . import report
 from . import errors as error
+from . import report
 
-err_messages = ["Too much parameters", "Too few parameters", "Wrong timestamp format"]
-cr_messages = ["File not found", "Empty file"]
+err_messages = ["Too much parameters", "Too few parameters", "Wrong timestamp format", "Empty line"]
+cr_messages = ["Empty file"]
 warn_messages = ["Empty element", "Wrong email format"]
 
 msgs = {}
@@ -38,10 +38,7 @@ def timestamp_validation(timestamp):
 
 def is_timestamp(timestamp):
     match = re.match(date_pattern, timestamp)
-    if match:
-        return True
-    else:
-        return False
+    return bool(match)
 
 def print_top(msgs):
     c = 1
@@ -55,37 +52,65 @@ def print_top(msgs):
                 break
     return line
 
-def print_report(skip, f, counter, errors, warnings, critical, output):
+def print_report(skip, f, counter, errors, warnings, critical, debug, output):
     if skip and print_top(msgs):
         report.event(f.name, "INFO", f"Analyzing ended. "
-                            f"Lines analyzed: {counter}, {errors + critical} skipped; "
-                            f"Events: {errors + critical + warnings} ( "
-                            f"WARNINGS: {warnings + errors}; "
-                            f"ERRORS: {0}; "
+                            f"Lines analyzed: {debug-warnings}, {errors+critical} skipped; "
+                            f"Events: {warnings + debug + 2} ( "
+                            f"DEBUGS: {debug}; "
+                            f"INFOS: 2; "
+                            f"WARNINGS: {warnings}; "
+                            f"ERRORS: 0; "
                             f"CRITICAL ERRORS: {critical} ) "
                             f"Top-5 errors: {print_top(msgs)}", output)
     elif errors + critical == 0:
         report.event(f.name, "INFO", f"Analyzing ended. "
                             f"Lines analyzed: {counter}; "
-                            f"Events: {errors + critical + warnings} ( "
+                            f"Events: {warnings + debug + 2} ( "
+                            f"DEBUGS: {debug}; "
+                            f"INFOS: 2; "
                             f"WARNINGS: {warnings}; "
-                            f"ERRORS: {errors}; "
-                            f"CRITICAL ERRORS: {critical} )", output)
+                            f"ERRORS: 0; "
+                            f"CRITICAL ERRORS: 0 )", output)
+    else:
+        report.event(f.name, "INFO", f"Analyzing ended prematurely. "
+                                     f"Lines analyzed: {counter}; "
+                                     f"Events: {errors + critical + warnings + debug + 2} ( "
+                                     f"DEBUGS: {debug}; "
+                                     f"INFOS: 2; "
+                                     f"WARNINGS: {warnings}; "
+                                     f"ERRORS: {errors}; "
+                                     f"CRITICAL ERRORS: {critical} ) ", output)
 
 def parse_csv(file, skip, output):
 
     def analyze_line(counter, check, header, output):
 
-        def validate(f, header, row, counter, skip, output):
+        def validate(f, header, row, counter, skip, output, debug, warnings):
             flag = 0
             c = 0
-            source = f"{f.name}, Line: {counter + 1}"
+            source = f"{f.name}, Line: {counter}"
+
+            if len(row) == 0:
+                add_to_dict(msgs, err_messages[3])
+                if skip:
+                    report.event(source, "WARNING", err_messages[3], output)
+                    warnings+=1
+                    report.event(source, "DEBUG", "Skipping line...", output)
+                    debug += 1
+                    flag = 1
+                    return counter - 1, flag, debug, warnings
+                else:
+                    report.event(source, "ERROR", err_messages[3], output)
+                    print_report(skip, f, counter, errors+1, warnings, critical, debug, output)
+                    raise error.WrongEventError()
+
             for i in row:
                 c+=1
 
                 if len(str(i)) == 0:
                     report.event(source, "WARNING", f"{warn_messages[0]} \"{i}\"", output)
-                    add_to_dict(msgs, warn_messages[0])
+                    warnings+=1
                     flag = 1
 
                 if is_timestamp(str(i)):
@@ -93,31 +118,46 @@ def parse_csv(file, skip, output):
                         add_to_dict(msgs, err_messages[2])
                         if skip:
                             report.event(source, "WARNING", err_messages[2], output)
-                            report.event(source, "DEBUG", "Skipping line...", output)
+                            warnings+=1
                         else:
                             report.event(source, "ERROR", err_messages[2], output)
+                            print_report(skip, f, counter, errors+1, warnings, critical, debug, output)
                             raise error.WrongTimestampError()
                         flag = 1
 
             if c < len(header):
+                add_to_dict(msgs, err_messages[1])
                 if skip:
                     report.event(source, "WARNING", err_messages[1], output)
-                    report.event(source, "DEBUG", "Skipping line...", output)
-                else: report.event(source, "ERROR", err_messages[1], output)
-                add_to_dict(msgs, err_messages[1])
+                    warnings+=1
+                else:
+                    report.event(source, "ERROR", err_messages[1], output)
+                    print_report(skip, f, counter, errors+1, warnings, critical, debug, output)
+                    raise error.WrongEventError()
                 flag = 1
 
             if c > len(header):
+                add_to_dict(msgs, err_messages[0])
                 if skip:
                     report.event(source, "WARNING", err_messages[0], output)
-                    report.event(source, "DEBUG", "Skipping line...", output)
-                else: report.event(source, "ERROR", err_messages[0], output)
-                add_to_dict(msgs, err_messages[0])
+                    warnings+=1
+                else:
+                    report.event(source, "ERROR", err_messages[0], output)
+                    print_report(skip, f, counter, errors+1, warnings, critical, debug, output)
+                    raise error.WrongEventError()
                 flag = 1
 
             if flag:
-                return counter - 1, flag
-            return counter, flag
+                if skip:
+                    report.event(source, "DEBUG", "Skipping line...", output)
+                    debug += 1
+                return counter - 1, flag, debug, warnings
+            return counter, flag, debug, warnings
+
+        debug = 0
+        warnings = 0
+        errors = 0
+        critical = 0
 
         for row in reader:
 
@@ -128,34 +168,42 @@ def parse_csv(file, skip, output):
 
             counter += 1
 
-            gl_counter, flag = validate(f, header, row, counter, skip, output)
+            gl_counter, flag, debug, warnings = validate(f, header, row, counter, skip, output, debug, warnings)
 
             errors = count_msg(msgs, err_messages)
-            warnings = count_msg(msgs, warn_messages)
             critical = count_msg(msgs, cr_messages)
 
             if (skip == False and (errors + critical) > 0):
-                return 2
+                raise error.StreamStatsError
 
             if flag == 0:
-                report.event(f"{f.name}, Line: {counter}", "DEBUG", "Line analyzed", output)
+                report.event(f"{f.name}, Line: {counter}", "DEBUG", f"Line {row} analyzed", output)
+                debug+=1
 
-        return errors, warnings, critical, counter, gl_counter
+        if check == 0:
+            report.event(f.name, "CRITICAL", cr_messages[0], output)
+            raise error.StreamStatsError
+        return errors, warnings, critical, debug, counter, gl_counter
 
     counter = 0
     check = 0
     header = []
 
     with open(file, 'r', encoding='utf-8') as f:
-        reader = csv.reader(f)
-        errors, warnings, critical, counter, gl_counter = analyze_line(counter, check, header, output)
-        print_report(skip, f, gl_counter-(errors+warnings+critical), errors, warnings, critical, output)
+        try:
+            reader = csv.reader(f)
+            errors, warnings, critical, debug, counter, gl_counter = analyze_line(counter, check, header, output)
+            print_report(skip, f, gl_counter-(errors+critical), errors, warnings, critical, debug, output)
+        except error.WrongEventError:
+            raise
+        except error.WrongTimestampError:
+            raise
 
 def parse_jsonl(file, skip, output):
 
     def analyze_line(counter, check, header, output):
 
-        def validate(f, header, row, counter, skip, output):
+        def validate(f, header, row, counter, skip, output, debug, warnings):
             flag = 0
             c = 0
             source = f"{f.name}, Line: {counter}"
@@ -163,16 +211,20 @@ def parse_jsonl(file, skip, output):
             for i in row:
                 c += 1
                 if i not in header:
+                    add_to_dict(msgs, err_messages[0])
                     if skip:
                         report.event(source, "WARNING", err_messages[0], output)
-                        report.event(source, "DEBUG", "Skipping line...", output)
-                    else: report.event(source, "ERROR", err_messages[0], output)
-                    add_to_dict(msgs, err_messages[0])
+                        warnings += 1
+                    else:
+                        report.event(source, "ERROR", err_messages[0], output)
+                        print_report(skip, f, counter, errors + 1, warnings, critical, debug, output)
+                        raise error.WrongEventError()
                     flag = 1
 
                 if len(str(row[i])) == 0:
                     report.event(source, "WARNING", warn_messages[0], output)
                     add_to_dict(msgs, warn_messages[0])
+                    warnings += 1
                     flag = 1
                     #report.event(source, "DEBUG", "Skipping line...")
 
@@ -181,23 +233,35 @@ def parse_jsonl(file, skip, output):
                         add_to_dict(msgs, err_messages[2])
                         if skip:
                             report.event(source, "WARNING", err_messages[2], output)
-                            report.event(source, "DEBUG", "Skipping line...", output)
+                            warnings += 1
                         else:
                             report.event(source, "ERROR", f"{error.WrongTimestampError.default_message}", output)
+                            print_report(skip, f, counter, errors + 1, warnings, critical, debug, output)
                             raise error.WrongTimestampError
                         flag = 1
 
             if c < len(header):
+                add_to_dict(msgs, err_messages[1])
                 if skip:
                     report.event(source, "WARNING", err_messages[1], output)
-                    report.event(source, "DEBUG", "Skipping line...", output)
-                else: report.event(source, "ERROR", err_messages[1], output)
-                add_to_dict(msgs, err_messages[1])
+                    warnings += 1
+                else:
+                    report.event(source, "ERROR", err_messages[1], output)
+                    print_report(skip, f, counter, errors + 1, warnings, critical, debug, output)
+                    raise error.WrongEventError()
                 flag = 1
 
             if flag:
-                return counter - 1, flag
-            return counter, flag
+                if skip:
+                    report.event(source, "DEBUG", "Skipping line...", output)
+                    debug += 1
+                return counter - 1, flag, debug, warnings
+            return counter, flag, debug, warnings
+
+        debug = 0
+        warnings = 0
+        errors = 0
+        critical = 0
 
         for row in f:
 
@@ -207,21 +271,28 @@ def parse_jsonl(file, skip, output):
             row = json.loads(row)
             if check == 0:
                 for i in row: header.append(i)
+                if header == []:
+                    report.event(f, "CRITICAL", cr_messages[0], output)
+                    raise error.StreamStatsError
                 check = 1
 
-            gl_counter, flag = validate(f, header, row, counter, skip, output)
+            gl_counter, flag, debug, warnings = validate(f, header, row, counter, skip, output, debug, warnings)
 
             errors = count_msg(msgs, err_messages)
-            warnings = count_msg(msgs, warn_messages)
             critical = count_msg(msgs, cr_messages)
 
             if (skip == False and (errors + critical) > 0):
-                return 2
+                raise error.StreamStatsError
 
             if flag==0:
-                report.event(f"{f.name}, Line: {counter}", "DEBUG", "Line analyzed", output)
+                report.event(f"{f.name}, Line: {counter}", "DEBUG", f"Line {row} analyzed", output)
+                debug+=1
 
-        return errors, warnings, critical, counter, gl_counter
+        if check == 0:
+            report.event(f.name, "CRITICAL", cr_messages[0], output)
+            raise error.StreamStatsError
+
+        return errors, warnings, critical, debug, counter, gl_counter
 
     counter = 0
     check = 0
@@ -229,9 +300,10 @@ def parse_jsonl(file, skip, output):
 
     with open(file, 'r', encoding='utf-8') as f:
         try:
-            errors, warnings, critical, counter, gl_counter = analyze_line(counter, check, header, output)
-            print_report(skip, f, gl_counter-(errors+warnings+critical)+1, errors, warnings, critical, output)
+            errors, warnings, critical, debug, counter, gl_counter = analyze_line(counter, check, header, output)
+            print_report(skip, f, gl_counter-(errors+critical), errors, warnings, critical, debug, output)
+            return 0
+        except error.WrongEventError:
+            raise
         except error.WrongTimestampError:
             raise
-        except:
-            return 2

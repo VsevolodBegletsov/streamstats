@@ -1,5 +1,6 @@
 from datetime import *
 
+
 class Event:
     timestamp: str
     level: str

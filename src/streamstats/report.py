@@ -1,6 +1,7 @@
-from . import models
-from datetime import *
 import json
+from datetime import *
+
+from . import models
 
 timestamps = []
 
@@ -20,7 +21,7 @@ def report(e, output):
         timestamps.append(str(e.timestamp))
 
     if "Events" in e.message:
-        json_data["message"] += f"First timestamp: {timestamps[0]} Last timestamp: {timestamps[1]}"
+        json_data["message"] += f"First timestamp: {timestamps[0].replace(' ', 'T')[:-3]}Z Last timestamp: {timestamps[1].replace(' ', 'T')[:-3]}Z"
 
     try:
         with open(f'{output}', 'r', encoding='utf-8') as f:

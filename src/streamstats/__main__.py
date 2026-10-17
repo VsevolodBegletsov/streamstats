@@ -1,6 +1,9 @@
+import sys
 from argparse import *
-from . import analysis
+
 from . import errors
+from . import analysis
+
 
 def build_parser():
     parser = ArgumentParser(
@@ -22,10 +25,12 @@ def build_parser():
 def main(argv):
     parser = build_parser()
     args = parser.parse_args(argv)
-    res = analysis.main(args)
-    if res == 2:
-        raise errors.StreamStatsError("Exit Code 2")
-    return res
+    try:
+        analysis.main(args)
+    except errors.StreamStatsError as e:
+        #print(e, file=sys.stderr)
+        return 2
+    return 0
 
 if __name__ == "__main__":
     raise SystemExit(main(argv=None))
