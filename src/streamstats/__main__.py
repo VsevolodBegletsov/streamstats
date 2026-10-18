@@ -1,11 +1,11 @@
 import sys
 from argparse import *
 
-from . import errors
-from . import analysis
+from . import analysis, errors
 
 
-def build_parser():
+def build_parser() -> ArgumentParser:
+    """Создать парсер"""
     parser = ArgumentParser(
         prog = "streamstats",
         description = "Vsevolod Begletsov's Streamstats",
@@ -22,13 +22,14 @@ def build_parser():
 
     return parser
 
-def main(argv):
+def main(argv: None) -> int:
+    """Старт программы"""
     parser = build_parser()
     args = parser.parse_args(argv)
     try:
         analysis.main(args)
     except errors.StreamStatsError as e:
-        #print(e, file=sys.stderr)
+        print(e, file=sys.stderr)
         return 2
     return 0
 

@@ -4,12 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8e2995c2-420d-495b-bc1e-d74846eb8e97" name="Changes" comment="">
+    <list default="true" id="8e2995c2-420d-495b-bc1e-d74846eb8e97" name="Changes" comment="update 4">
       <change afterPath="$PROJECT_DIR$/tests/test_.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/streamstats/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/streamstats/__main__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/__main__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/streamstats/analysis.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/analysis.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/streamstats/errors.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/errors.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/streamstats/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/streamstats/parsers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/parsers.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/streamstats/report.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/streamstats/report.py" afterDir="false" />
@@ -127,13 +127,22 @@
       <option name="project" value="LOCAL" />
       <updated>1792096210464</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="update 4">
+      <option name="closed" value="true" />
+      <created>1792281066345</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1792281066345</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="structure" />
     <MESSAGE value="update 1" />
-    <option name="LAST_COMMIT_MESSAGE" value="update 1" />
+    <MESSAGE value="update 4" />
+    <option name="LAST_COMMIT_MESSAGE" value="update 4" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

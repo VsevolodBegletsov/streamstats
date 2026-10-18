@@ -5,11 +5,13 @@ from . import models
 
 timestamps = []
 
-def event(file, level, msg, output):
+def event(file: str, level: str, msg: str, output: str) -> None:
+    """Создание класса записываемого в отчёт сообщения"""
     e = models.createEvent(datetime.now(), file, level, msg)
     report(e, output)
 
-def report(e, output):
+def report(e: models.Event, output: str) -> None:
+    """Запись сообщения в отчёт"""
     json_data = { "timestamp":  str(e.timestamp.isoformat()[:-3]+'Z'),
                  "level": e.level,
                  "source": e.source,

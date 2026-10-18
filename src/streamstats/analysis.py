@@ -1,9 +1,11 @@
+from argparse import Namespace
 from pathlib import Path
 
 from . import errors, parsers, report
 
 
-def analyze(file, format, skip, output):
+def analyze(file: str, format: str, skip: bool, output: str) -> None:
+    """Первичная проверка файла и начало его анализа"""
     try:
         if not Path(file).is_file():
             raise errors.WrongCLIConfError()
@@ -26,5 +28,6 @@ def analyze(file, format, skip, output):
         raise
 
 
-def main(args):
+def main(args: Namespace) -> None:
+    """Запуск функции анализа файла"""
     return analyze(args.INPUT, args.format, args.skip_invalid, args.output_file)

@@ -1,13 +1,12 @@
-from datetime import *
-
-
 class Event:
+    """Класс сообщения"""
     timestamp: str
     level: str
     source: str
     message: str
 
-def createEvent(timestamp, file, level, msg):
+def createEvent(timestamp: str, file: str, level: str, msg: str) -> Event:
+    """Создание объекта сообщения"""
     e = Event()
     e.timestamp = timestamp
     e.level = level
