@@ -7,20 +7,25 @@ from . import analysis, errors
 def build_parser() -> ArgumentParser:
     """Создать парсер"""
     parser = ArgumentParser(
-        prog = "streamstats",
-        description = "Vsevolod Begletsov's Streamstats",
+        prog="streamstats",
+        description="Vsevolod Begletsov's Streamstats",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
 
-    analyze_parser = subparsers.add_parser("analyze")
-    analyze_parser.add_argument("INPUT")
-    analyze_parser.add_argument("--format", dest="format", required=True)
-    analyze_parser.add_argument("--output", dest="output_file", default="REPORT.json", required=True)
-    analyze_parser.add_argument("--skip-invalid", action="store_true", required=False, default=False)
+    analyze_parser = subparsers.add_parser("analyze", help="Format: INPUT --format FORMAT --output OUTPUT (--skip-invalid)")
+    analyze_parser.add_argument("INPUT", help="Enter file address")
+    analyze_parser.add_argument("--format", dest="format", help="Enter file fotmat", required=True)
+    analyze_parser.add_argument(
+        "--output", dest="output_file", help="Enter output file name", default="REPORT.json", required=True
+    )
+    analyze_parser.add_argument(
+        "--skip-invalid", action="store_true", help="Enter --skip-invalid if you want to skip errors", required=False, default=False
+    )
 
     analyze_parser.set_defaults(func=analysis.main)
 
     return parser
+
 
 def main(argv: None) -> int:
     """Старт программы"""
@@ -32,6 +37,7 @@ def main(argv: None) -> int:
         print(e, file=sys.stderr)
         return 2
     return 0
+
 
 if __name__ == "__main__":
     raise SystemExit(main(argv=None))

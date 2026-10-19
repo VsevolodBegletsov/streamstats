@@ -15,16 +15,20 @@ def analyze(file: str, format: str, skip: bool, output: str) -> None:
         if file.split(".")[-1] != format or file.split(".")[-1] not in ["csv", "jsonl"]:
             raise errors.WrongFormatError()
 
-        if format == 'csv':
+        if format == "csv":
             parsers.parse_csv(file, skip, output)
-        elif format == 'jsonl':
+        elif format == "jsonl":
             parsers.parse_jsonl(file, skip, output)
 
     except errors.WrongCLIConfError:
-        report.event(file, "CRITICAL", f"{errors.WrongCLIConfError.default_message}", output)
+        report.event(
+            file, "CRITICAL", f"{errors.WrongCLIConfError.default_message}", output
+        )
         raise
     except errors.WrongFormatError:
-        report.event(file, "CRITICAL", f"{errors.WrongFormatError.default_message}", output)
+        report.event(
+            file, "CRITICAL", f"{errors.WrongFormatError.default_message}", output
+        )
         raise
 
 

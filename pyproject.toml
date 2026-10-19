@@ -5,7 +5,7 @@ description = "Add your description here"
 authors = [
     { name = "ChurchhellaKom", email = "vsevolodddd08@mail.ru" }
 ]
-requires-python = ">=3.14"
+requires-python = ">=3.14,<4.0"
 dependencies = [
     "black>=26.10.1",
     "poetry>=2.5.1",

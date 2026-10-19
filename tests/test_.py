@@ -33,6 +33,7 @@ class BaseTest(unittest.TestCase):
         with open(self.out, "r", encoding="utf-8") as f:
             return json.load(f)
 
+
 class TestUnicode(BaseTest):
 
     def test_csv_with_cyrillic(self):
@@ -54,14 +55,18 @@ class TestUnicode(BaseTest):
 
     def test_jsonl_with_unicode(self):
         line1 = json.dumps(
-            {"timestamp": "2024-01-01T10:00:00Z",
-             "name": "Bubsich",
-             "message": "日本語"},
+            {
+                "timestamp": "2024-01-01T10:00:00Z",
+                "name": "Bubsich",
+                "message": "日本語",
+            },
         )
         line2 = json.dumps(
-            {"timestamp": "2024-01-01T10:00:01Z",
-             "name": "Macron",
-             "message": "français"},
+            {
+                "timestamp": "2024-01-01T10:00:01Z",
+                "name": "Macron",
+                "message": "français",
+            },
         )
         path = self.make_file("uni.jsonl", line1 + "\n" + line2 + "\n")
 
@@ -87,13 +92,13 @@ class TestUnicode(BaseTest):
         sources = " ".join(item["source"] for item in report_data)
         self.assertIn("файл.csv", sources)
 
+
 class TestCLI(BaseTest):
 
     def test_valid_csv_returns_zero(self):
         path = self.make_file(
             "ok.csv",
-            "timestamp,name,message\n"
-            "2024-01-01T10:00:00Z,Lobanov,hello\n",
+            "timestamp,name,message\n" "2024-01-01T10:00:00Z,Lobanov,hello\n",
         )
 
         code = self.run_cli(path, "--format", "csv")
@@ -112,8 +117,7 @@ class TestCLI(BaseTest):
 
         path = self.make_file(
             "bad.csv",
-            "name,message\n"
-            "2022,Romanenko,oops\n",
+            "name,message\n" "2022,Romanenko,oops\n",
         )
 
         code = self.run_cli(path, "--format", "csv")
@@ -155,9 +159,7 @@ class TestCLI(BaseTest):
 
     def test_valid_jsonl_returns_zero(self):
         line = json.dumps(
-            {"timestamp": "2024-01-01T10:00:00Z",
-             "name": "Kupitman",
-             "message": "hi"},
+            {"timestamp": "2024-01-01T10:00:00Z", "name": "Kupitman", "message": "hi"},
             ensure_ascii=False,
         )
         path = self.make_file("ok.jsonl", line + "\n")
@@ -170,8 +172,7 @@ class TestCLI(BaseTest):
 
         path = self.make_file(
             "ok.csv",
-            "timestamp,name,message\n"
-            "2024-01-01T10:00:00Z,Raivo,a\n",
+            "timestamp,name,message\n" "2024-01-01T10:00:00Z,Raivo,a\n",
         )
 
         code1 = self.run_cli(path, "--format", "csv")
